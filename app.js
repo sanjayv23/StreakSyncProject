@@ -17,7 +17,7 @@ dotenv.config();
 const app = express();
 const saltRounds = 3;
 const port = process.env.PORT;
-const d = new Date();
+
 
 const db = new pg.Client({
   user: process.env.DB_USER,
@@ -47,12 +47,13 @@ app.use(passport.session());
 let task = [];
 let complete = [];
 let percent;
+const d = new Date();
 let date = d.getDate() +" "+ (d.getMonth()+1) +" " + d.getFullYear();
 
 // get routes
 
 app.get("/", (req,res) => {
-  res.render("home.ejs");
+  res.redirect("/login");
 });
 
 app.get("/register", (req,res) => { 
@@ -68,6 +69,7 @@ app.get("/login", (req,res) => {
 });
 
 app.get("/app", async (req,res) => {
+  const d = new Date();
   console.log(" data: "+ new Date().toISOString().split('T')[0]);
   console.log("old date: "+d.getDate());
   if(req.isAuthenticated()) {
@@ -85,7 +87,8 @@ app.get("/app", async (req,res) => {
     catch(err) {
       console.error("error is executing"+err.stack);
     }
-    percent = (a + b) === 0 ? 0 : (b / (a + b)) * 100;
+    percent = (a + b) === 0 ? 0 : Math.floor((b / (a + b)) * 100);
+
     await db.query(
       "INSERT INTO complete_percentage (user_id, date, percentage) VALUES ($1, $2, $3) ON CONFLICT (user_id, date) DO UPDATE SET percentage = $3;",[req.user.id,new Date().toISOString().split('T')[0],parseInt(percent)]
     );
@@ -108,7 +111,8 @@ app.get("/auth/google/streaksync", passport.authenticate("google", {
   failureRedirect: "/login?error=Invalid credentials.",
 }));
 
-app.post("/streak", async (req, res) => {
+app.get("/app/history", async (req, res) => {
+  const d = new Date();
   try {
     console.log(req.user); // Ensure this has { id: ... }
 
@@ -139,7 +143,7 @@ app.get("/logout", (req,res) => {
 
 // p
 app.post("/register", async (req,res) => {
-
+  const d = new Date();
   const {name, mail, password} = req.body;
   //console.log("inside register: "+JSON.stringify(req.body));
   const result = await db.query(
@@ -172,6 +176,7 @@ app.post("/login", passport.authenticate("local", {
 
 // add task on task list
 app.post("/task", async (req, res) => {
+  const d = new Date();
   console.log("tkas:", req.body.t_name);
   const task_id = uuidv4();
   try {
@@ -188,6 +193,7 @@ app.post("/task", async (req, res) => {
 
 // delete task on task list
 app.post("/delete-task",async (req,res)=>{
+  const d = new Date();
   console.log("del id: "+req.body.task_id);
   try {    
       const data=await db.query("delete from task where task_id=($1)",[req.body.task_id]);
@@ -200,6 +206,7 @@ app.post("/delete-task",async (req,res)=>{
 
 // to mark complete on task
 app.post("/complete-task", async (req, res) => {
+  
   if (!req.isAuthenticated()) return res.redirect("/login");
 
   const d = new Date(); // fresh date
@@ -249,9 +256,10 @@ app.post("/complete-task", async (req, res) => {
 
 
 // delete all completed task
-app.post("/delete-complete",(req,res)=>{
+app.post("/delete-complete",async  (req,res)=>{
+  const d = new Date();
   try{
-      db.query("delete from complete_task where date=($1) and month=($2) and year=($3)",
+      await db.query("delete from complete_task where date=($1) and month=($2) and year=($3)",
         [d.getDate(), d.getMonth()+1, d.getFullYear()]);
   }
   catch(err) {
@@ -262,9 +270,10 @@ app.post("/delete-complete",(req,res)=>{
 
 
 // delete all task on task list
-app.post("/delete-today",(req,res)=>{
+app.post("/delete-today", async (req,res)=>{
+  const d = new Date();
   try {
-      db.query("delete from task where date=($1) and month=($2) and year=($3)",
+      await db.query("delete from task where date=($1) and month=($2) and year=($3)",
         [d.getDate(), d.getMonth()+1, d.getFullYear()]
       );
   }
