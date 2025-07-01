@@ -95,8 +95,26 @@ app.get("/app", async (req,res) => {
     // for(let i=0;i<task.length;i++){
     //   console.log("task: "+JSON.stringify(task[i]));
     // }
-    
-    res.render("app.ejs", {user_id:req.user.id,task:task,date:date,complete:complete,percent:percent} );
+  let result;
+  try {
+    console.log(req.user); // Ensure this has { id: ... }
+
+     result = await db.query(`
+  SELECT TO_CHAR(date, 'YYYY-MM-DD') AS date, percentage
+  FROM complete_percentage
+  WHERE user_id = $1;
+`,[req.user.id]
+    );
+
+    console.log("-------"+JSON.stringify(result.rows)); // Log rows for debugging
+
+
+    //res.render("app.ejs", { streak: result.rows }); // send data to EJS
+  } catch (err) {
+    console.error("Error fetching streak data:", err);
+    res.status(500).send("Internal Server Error");
+  }
+    res.render("app.ejs", {user_id:req.user.id,task:task,date:date,complete:complete,percent:percent,streak:result.rows} );
   }
   else 
     res.redirect("/login?error=Kindly login.");
@@ -112,25 +130,26 @@ app.get("/auth/google/streaksync", passport.authenticate("google", {
 }));
 
 app.get("/app/history", async (req, res) => {
-  const d = new Date();
-  try {
-    console.log(req.user); // Ensure this has { id: ... }
+//   const d = new Date();
+//   try {
+//     console.log(req.user); // Ensure this has { id: ... }
 
-    const result = await db.query(`
-  SELECT TO_CHAR(date, 'YYYY-MM-DD') AS date, percentage
-  FROM complete_percentage
-  WHERE user_id = $1;
-`,[req.user.id]
-    );
+//     const result = await db.query(`
+//   SELECT TO_CHAR(date, 'YYYY-MM-DD') AS date, percentage
+//   FROM complete_percentage
+//   WHERE user_id = $1;
+// `,[req.user.id]
+//     );
 
-    console.log("-------"+JSON.stringify(result.rows)); // Log rows for debugging
+//     console.log("-------"+JSON.stringify(result.rows)); // Log rows for debugging
 
 
-    res.render("streak.ejs", { streak: result.rows }); // send data to EJS
-  } catch (err) {
-    console.error("Error fetching streak data:", err);
-    res.status(500).send("Internal Server Error");
-  }
+//     res.render("app.ejs", { streak: result.rows }); // send data to EJS
+//   } catch (err) {
+//     console.error("Error fetching streak data:", err);
+//     res.status(500).send("Internal Server Error");
+//   }
+res.redirect("/app#heatmap-container")
 });
 
 

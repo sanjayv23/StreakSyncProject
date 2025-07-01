@@ -9,8 +9,8 @@
       --bg-color: #f7f7f7;
       --text-color: #111;
       --container-bg: #fff;
-      --button-bg: #4caf50;
-      --button-hover: #43a047;
+      --button-bg: purple;
+      --button-hover: purple;
       --input-border: #ccc;
     }
 
@@ -18,8 +18,8 @@
       --bg-color: #121212;
       --text-color: #e0e0e0;
       --container-bg: #1e1e1e;
-      --button-bg: #81c784;
-      --button-hover: #66bb6a;
+      --button-bg: purple;
+      --button-hover: purple;
       --input-border: #555;
     }
 
@@ -27,6 +27,7 @@
       font-family: sans-serif;
       margin: 0;
       padding: 0;
+      width: 100%;
       background-color: var(--bg-color);
       color: var(--text-color);
       transition: background 0.3s, color 0.3s;
@@ -57,6 +58,7 @@
 
     .left-container, .right-container {
       padding: 20px;
+      
       background: var(--container-bg);
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
@@ -112,7 +114,7 @@
     #dark-toggle {
       position: fixed;
       top: 10px;
-      right: 20px;
+      right: 10px;
       background-color: var(--button-bg);
       color: white;
       border: none;
@@ -125,6 +127,74 @@
     #dark-toggle:hover {
       background-color: var(--button-hover);
     }
+    .heatmap {
+      display: grid;
+      grid-template-rows: repeat(7, 1fr); /* 7 days in a week */
+      grid-auto-flow: column;
+      gap: 4px;
+      justify-content: start;
+    }
+
+    .day-box {
+      width: 14px;
+      height: 14px;
+      border-radius: 2px;
+      
+      background-color: #ebedf0;
+      transition: background-color 0.3s;
+    }
+
+    .tooltip {
+      position: absolute;
+      padding: 5px 15px;
+      background-color: black;
+      color: white;
+      font-size: 12px;
+      border-radius: 3px;
+      display: none;
+      pointer-events: none;
+      z-index: 10;
+
+    }
+    h1{
+      text-align: center;
+      margin-bottom: 40px;
+      
+    }
+    #heatmap-container {
+  display: flex;
+  background-color: #4e4d4d;
+  width: fit-content;
+  padding: 20px;
+  border-radius: 10px;
+  margin: 30PX;
+  flex-direction: column;
+  align-items: start;
+  gap: 6px;
+}
+
+.month-labels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 1fr); /* TEMP — will override in JS */
+  font-size: 12px;
+  color: #000000;
+  font-family: monospace;
+  width: fit-content;
+}
+
+
+.month-label {
+  margin-left: .2rem;
+  
+  grid-row: 1;
+  text-align: center;
+}
+#logo{
+  text-align: center;
+  font-size: 40px;
+  
+  margin:20px
+}
   </style>
 </head>
 <body data-theme="light">
@@ -132,7 +202,7 @@
 <button id="dark-toggle">🌙 Dark Mode</button>
 
 <a href="/logout" role="button">Log Out</a>
-
+<h1 id="logo"> STREAK SYNC </h1>
 <div class="app-container">
 
   <!-- Left Side -->
@@ -196,6 +266,14 @@
   </div>
 </div>
 
+<h1>Your Streak </h1>
+  <div id="heatmap-container">
+    <div class="month-labels" id="month-labels"></div>
+    <div class="heatmap" id="heatmap"></div>
+  </div>
+
+<div class="tooltip" id="tooltip"></div>
+
 <script>
   const toggle = document.getElementById("dark-toggle");
   const body = document.body;
@@ -215,6 +293,115 @@
   // Load saved theme
   const savedTheme = localStorage.getItem("theme") || "light";
   applyTheme(savedTheme);
+
+  const streakData = JSON.parse('<%- JSON.stringify(streak) %>');
+  const dataMap = {};
+  streakData.forEach(entry => {
+    dataMap[entry.date] = entry.percentage;
+  });
+
+  function getColor(percentage) {
+    if (percentage >= 90) return "#216e39";
+    if (percentage >= 60) return "#30a14e";
+    if (percentage >= 30) return "#40c463";
+    if (percentage > 0) return "#9be9a8";
+    return "#ebedf0"; // no progress
+  }
+
+  function getPastDates(monthsBack = 6) {
+    const dates = [];
+    const today = new Date();
+    const start = new Date(today);
+    start.setDate(1); // Start from first of the month
+    start.setMonth(today.getMonth() - monthsBack);
+
+    for (let d = new Date(start); d <= today; d.setDate(d.getDate() + 1)) {
+      const iso = d.toISOString().split('T')[0];
+      dates.push(iso);
+    }
+    return dates;
+  }
+
+  const dates = getPastDates();
+  const heatmap = document.getElementById("heatmap");
+  const labelRow = document.getElementById("month-labels");
+  const tooltip = document.getElementById("tooltip");
+
+  let prevMonth = -1;
+  let currentWeek = -1;
+  // 🔥 Count total weeks to set correct grid columns in labelRow
+let totalWeeks = 0;
+let weekTracker = -1;
+dates.forEach((date, i) => {
+  const d = new Date(date);
+  const day = d.getDay();
+  if (day === 0 || i === 0) weekTracker++;
+});
+totalWeeks = weekTracker + 1;
+
+// 👇 Set labelRow grid to match total week columns
+labelRow.style.display = "grid";
+labelRow.style.gridTemplateColumns = `repeat(${totalWeeks}, 1fr)`;
+
+  dates.forEach((date, i) => {
+  const d = new Date(date);
+  const day = d.getDay();
+  const month = d.getMonth();
+   const monthName = d.toLocaleString("default", { month: "short" });
+  // Track week column
+  console.log("jul 01: " + monthName);
+  if (day === 0 || i === 0) currentWeek++;
+
+  // If new month and not the first date, insert spacer
+  if (month !== prevMonth && i !== 0) {
+    const spacer = document.createElement("div");
+    spacer.style.width = "6px";
+    spacer.style.gridRow = "span 7";
+    heatmap.appendChild(spacer);
+  }
+
+  // Month label
+  if (month !== prevMonth) {
+    // const label = document.createElement("div");
+    // label.className = "month-label";
+    // label.style.gridColumnStart = currentWeek + 1;
+    // label.textContent =monthName;
+    // labelRow.appendChild(label);
+    const label = document.createElement("div");
+    label.className = "month-label";
+    label.style.gridColumn = `${currentWeek + 1}`;
+    label.textContent = monthName;
+    labelRow.appendChild(label);
+  
+  }
+
+  // Day box
+  const box = document.createElement("div");
+  box.className = "day-box";
+  box.style.backgroundColor = getColor(dataMap[date] || 0);
+
+  // Tooltip
+  box.addEventListener("mouseenter", (e) => {
+    tooltip.textContent = `${date} - ${dataMap[date] || 0}% complete`;
+    tooltip.style.left = e.pageX + 10 + "px";
+    tooltip.style.top = e.pageY + "px";
+    tooltip.style.display = "block";
+  });
+
+  box.addEventListener("mousemove", (e) => {
+    tooltip.style.left = e.pageX + 10 + "px";
+    tooltip.style.top = e.pageY + "px";
+  });
+
+  box.addEventListener("mouseleave", () => {
+    tooltip.style.display = "none";
+  });
+
+  heatmap.appendChild(box);
+
+  // Now update prevMonth
+  prevMonth = month;
+});
 </script>
 
 </body>
