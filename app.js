@@ -160,6 +160,10 @@ app.get("/logout", (req,res) => {
   })
 })
 
+// app.get("/aboutus", (req,res) => {
+//   res.render("aboutus.ejs");
+// });
+
 // p
 app.post("/register", async (req,res) => {
   const d = new Date();
