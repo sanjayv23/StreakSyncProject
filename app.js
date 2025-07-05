@@ -160,11 +160,14 @@ app.get("/logout", (req,res) => {
   })
 })
 
-// app.get("/aboutus", (req,res) => {
-//   res.render("aboutus.ejs");
-// });
+app.get("/aboutus", (req, res) => {
+  res.render("aboutus.ejs");
+});
 
-// p
+app.get("/contact", (req, res) => {
+  res.render("contact.ejs");
+});
+
 app.post("/register", async (req,res) => {
   const d = new Date();
   const {name, mail, password} = req.body;

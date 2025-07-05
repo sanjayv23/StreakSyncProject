@@ -141,13 +141,24 @@
     }
 
     #dark-toggle {
-      height: 70px;
-      border-radius: 35px;
+      height: fit-content;
+      border-radius: 25px;
+      padding: 10px 20px;
       position: fixed;
       bottom: 50px;
       right: 30px;
       cursor: pointer;
       z-index: 1000;
+      
+      
+    }
+
+    #dark-toggle:hover {
+      background-color: var(--button-hover);
+    }
+    
+    #dark-toggle:focus {
+      outline: none;
     }
     
     .footer {
@@ -178,16 +189,16 @@
   <div class="container">
 
     <div class="topnav"> 
-      <img src="/images/logo.png" alt="Logo" style="height: 40px; border-radius: 20px; float: left; padding: 5px 10px;">
+      <img src="/images/favicon.webp" alt="Logo" style="height: 40px; border-radius: 20px; float: left; padding: 5px 10px;">
       <a href="/app">Home</a>
       <a href="/contact">Contact</a>
-      <a class="active" href="/about">About</a>
+      <a class="active" href="/aboutus">About</a>
       <a href="/logout">Log Out</a>
     </div>
 
     <div class="about-section" style="max-width: 900px; margin: 100px auto 40px; padding: 40px 30px; background-color: var(--container-bg); border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
     <div style="text-align: center;">
-      <img src="/images/logo.png" alt="Streak Sync Logo" style="height: 80px; border-radius: 40px; margin-bottom: 20px;">
+      <img src="/images/favicon.webp" alt="Streak Sync Logo" style="height: 80px; border-radius: 40px; margin-bottom: 20px;">
       <h1 style="margin-bottom: 10px;">Welcome to <span style="color: var(--button-bg);">Streak Sync</span></h1>
       <p style="font-size: 18px; max-width: 700px; margin: 0 auto;">
         Your personal productivity companion for building consistent habits and getting things done—one streak at a time!
@@ -224,10 +235,11 @@
     </div>
   </div>
 
-     <img src="/images/torch.png" id="dark-toggle"> 
+     <!-- <img src="/images/torch.png" id="dark-toggle">  -->
+      <button id="dark-toggle">🌙  Dark Mode</button>
     <footer class="footer">
       <div class="footer-content">
-        <img src="/images/logo.png" alt="Streak Sync Logo">
+        <img src="/images/favicon.webp" alt="Streak Sync Logo">
         <p>© 2025 Streak Sync. All rights reserved.</p>
       </div>
     </footer>
