@@ -176,9 +176,8 @@
 }
 
 #logo {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+ text-align: center;
+ padding: 20px;
   font-size: 35px;
   font-weight: bold;
   color: white;
@@ -208,13 +207,7 @@
     }
 
     /* css calendar*/
-    .heatmap {
-      display: grid;
-      grid-template-rows: repeat(7, 1fr); /* 7 days in a week */
-      grid-auto-flow: column;
-      gap: 4px;
-      justify-content: start;
-    }
+    
 
     .day-box {
       width: 14px;
@@ -227,6 +220,7 @@
 
     .tooltip {
       position: absolute;
+
       padding: 5px 15px;
       background-color: black;
       color: white;
@@ -240,34 +234,37 @@
     
     #heatmap-container {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  width:30%;
+  align-items: center;
+  justify-self: center;
   background-color: #333333;
-  width: fit-content;
-  
   padding: 20px;
   border-radius: 10px;
-  margin: 30PX;
+  margin: 30px auto;
+}
+
+.month-group {
+  display: flex;
   flex-direction: column;
-  align-items: start;
-  gap: 6px;
+  align-items: center;
 }
-
-.month-labels {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, 1fr); /* TEMP — will override in JS */
-  font-size: 12px;
-  
-  color: #000000;
-  font-family: monospace;
-  width: fit-content;
-}
-
 
 .month-label {
-  margin-left: .2rem;
-  
-  grid-row: 1;
-  text-align: center;
+  color: white;
+  font-size: 20px;
+  margin-bottom: 6px;
+  font-family: monospace;
 }
+
+.heatmap-column {
+  display: grid;
+  grid-template-rows: repeat(7, 1fr);
+  gap: 4px;
+}
+
 
 #your-streak {
   text-align: center;
@@ -313,7 +310,7 @@
   }
   .left-container, .right-container {
     padding: 10px;
-    width: 100%;
+    width: 95%;
   }
   .topnav {
     width:100%;
@@ -332,9 +329,13 @@
   }
 
   #heatmap-container {
+    flex-direction: column;
+    align-items: center;
     padding: 10px;
     margin: 10px;
-    align-items: space-between;
+    display: flex;
+    width: 50%;
+    
   }
 
   h1 {
@@ -356,13 +357,17 @@
   #dark-toggle {
       height: fit-content;
       border-radius: 25px;
-      padding: 10px 10px;
+      padding: 10px 20px;
       position: fixed;
-      bottom:5%;
-      right: 2%;
+      bottom: 50px;
+      right: 30px;
       cursor: pointer;
       z-index: 1000;
       
+      
+    }
+    .footer{
+      width: 100%;
     }
 }
   </style>
@@ -374,14 +379,15 @@
 
 
  <div class="topnav"> 
-      <a  href="/home">Home</a>
+      <a  href="/app">Home</a>
       
       <a href="/contact">Contact</a>
       <a href="/aboutus">About</a>
       <a class="active" href="/logout">Log Out</a>
-      <div id="logo"> Streak Sync </div>
+      
       
     </div>
+    <div id="logo"> Streak Sync </div>
 <div class="app-container">
 
   <!-- Left Side -->
@@ -459,6 +465,134 @@
     </div>
   </footer>
 <script>
+//   const toggle = document.getElementById("dark-toggle");
+//   const body = document.body;
+
+//   function applyTheme(theme) {
+//     body.setAttribute("data-theme", theme);
+//     toggle.textContent = theme === "dark" ? "☀️ Light Mode" : "🌙 Dark Mode";
+//     localStorage.setItem("theme", theme);
+//   }
+
+//   toggle.addEventListener("click", () => {
+//     const current = body.getAttribute("data-theme");
+//     const next = current === "dark" ? "light" : "dark";
+//     applyTheme(next);
+//   });
+
+//   // Load saved theme
+//   const savedTheme = localStorage.getItem("theme") || "light";
+//   applyTheme(savedTheme);
+
+//   const streakData = JSON.parse('<%- JSON.stringify(streak) %>');
+//   const dataMap = {};
+//   streakData.forEach(entry => {
+//     dataMap[entry.date] = entry.percentage;
+//   });
+
+//   function getColor(percentage) {
+//     if (percentage >= 90) return "#216e39";
+//     if (percentage >= 60) return "#30a14e";
+//     if (percentage >= 30) return "#40c463";
+//     if (percentage > 0) return "#9be9a8";
+//     return "#ebedf0"; // no progress
+//   }
+
+//   function getPastDates(monthsBack = 6) {
+//     const dates = [];
+//     const today = new Date();
+//     const start = new Date(today);
+//     start.setDate(1); // Start from first of the month
+//     start.setMonth(today.getMonth() - monthsBack);
+
+//     for (let d = new Date(start); d <= today; d.setDate(d.getDate() + 1)) {
+//       const iso = d.toISOString().split('T')[0];
+//       dates.push(iso);
+//     }
+//     return dates;
+//   }
+
+//   const dates = getPastDates();
+//   const heatmap = document.getElementById("heatmap");
+//   const labelRow = document.getElementById("month-labels");
+//   const tooltip = document.getElementById("tooltip");
+
+//   let prevMonth = -1;
+//   let currentWeek = -1;
+//   // 🔥 Count total weeks to set correct grid columns in labelRow
+// let totalWeeks = 0;
+// let weekTracker = -1;
+// dates.forEach((date, i) => {
+//   const d = new Date(date);
+//   const day = d.getDay();
+//   if (day === 0 || i === 0) weekTracker++;
+// });
+// totalWeeks = weekTracker + 1;
+
+// // 👇 Set labelRow grid to match total week columns
+// labelRow.style.display = "grid";
+// labelRow.style.gridTemplateColumns = `repeat(${totalWeeks}, 1fr)`;
+
+//   dates.forEach((date, i) => {
+//   const d = new Date(date);
+//   const day = d.getDay();
+//   const month = d.getMonth();
+//    const monthName = d.toLocaleString("default", { month: "short" });
+//   // Track week column
+//   console.log("jul 01: " + monthName);
+//   if (day === 0 || i === 0) currentWeek++;
+
+//   // If new month and not the first date, insert spacer
+//   if (month !== prevMonth && i !== 0) {
+//     const spacer = document.createElement("div");
+//     spacer.style.width = "6px";
+//     spacer.style.gridRow = "span 7";
+//     heatmap.appendChild(spacer);
+//   }
+
+//   // Month label
+//   if (month !== prevMonth) {
+//     // const label = document.createElement("div");
+//     // label.className = "month-label";
+//     // label.style.gridColumnStart = currentWeek + 1;
+//     // label.textContent =monthName;
+//     // labelRow.appendChild(label);
+//     const label = document.createElement("div");
+//     label.className = "month-label";
+//     label.style.gridColumn = `${currentWeek + 1}`;
+//     label.textContent = monthName;
+//     labelRow.appendChild(label);
+  
+//   }
+
+//   // Day box
+//   const box = document.createElement("div");
+//   box.className = "day-box";
+//   box.style.backgroundColor = getColor(dataMap[date] || 0);
+
+//   // Tooltip
+//   box.addEventListener("mouseenter", (e) => {
+//     tooltip.textContent = `${date} - ${dataMap[date] || 0}% complete`;
+//     tooltip.style.left = e.pageX + 10 + "px";
+//     tooltip.style.top = e.pageY + "px";
+//     tooltip.style.display = "block";
+//   });
+
+//   box.addEventListener("mousemove", (e) => {
+//     tooltip.style.left = e.pageX + 10 + "px";
+//     tooltip.style.top = e.pageY + "px";
+//   });
+
+//   box.addEventListener("mouseleave", () => {
+//     tooltip.style.display = "none";
+//   });
+
+//   heatmap.appendChild(box);
+
+//   // Now update prevMonth
+//   prevMonth = month;
+// });
+
   const toggle = document.getElementById("dark-toggle");
   const body = document.body;
 
@@ -474,7 +608,6 @@
     applyTheme(next);
   });
 
-  // Load saved theme
   const savedTheme = localStorage.getItem("theme") || "light";
   applyTheme(savedTheme);
 
@@ -489,14 +622,14 @@
     if (percentage >= 60) return "#30a14e";
     if (percentage >= 30) return "#40c463";
     if (percentage > 0) return "#9be9a8";
-    return "#ebedf0"; // no progress
+    return "#ebedf0";
   }
 
   function getPastDates(monthsBack = 6) {
     const dates = [];
     const today = new Date();
     const start = new Date(today);
-    start.setDate(1); // Start from first of the month
+    start.setDate(1);
     start.setMonth(today.getMonth() - monthsBack);
 
     for (let d = new Date(start); d <= today; d.setDate(d.getDate() + 1)) {
@@ -508,84 +641,72 @@
 
   const dates = getPastDates();
   const heatmap = document.getElementById("heatmap");
-  const labelRow = document.getElementById("month-labels");
   const tooltip = document.getElementById("tooltip");
 
-  let prevMonth = -1;
-  let currentWeek = -1;
-  // 🔥 Count total weeks to set correct grid columns in labelRow
-let totalWeeks = 0;
-let weekTracker = -1;
-dates.forEach((date, i) => {
-  const d = new Date(date);
-  const day = d.getDay();
-  if (day === 0 || i === 0) weekTracker++;
-});
-totalWeeks = weekTracker + 1;
+  const groupedByMonth = {};
 
-// 👇 Set labelRow grid to match total week columns
-labelRow.style.display = "grid";
-labelRow.style.gridTemplateColumns = `repeat(${totalWeeks}, 1fr)`;
+  dates.forEach((date) => {
+    const d = new Date(date);
+    const monthKey = `${d.getFullYear()}-${d.getMonth()}`;
+    if (!groupedByMonth[monthKey]) groupedByMonth[monthKey] = [];
+    groupedByMonth[monthKey].push(date);
+  });
 
-  dates.forEach((date, i) => {
-  const d = new Date(date);
-  const day = d.getDay();
-  const month = d.getMonth();
-   const monthName = d.toLocaleString("default", { month: "short" });
-  // Track week column
-  console.log("jul 01: " + monthName);
-  if (day === 0 || i === 0) currentWeek++;
+  for (const monthKey in groupedByMonth) {
+    const monthDates = groupedByMonth[monthKey];
+    const monthContainer = document.createElement("div");
+    monthContainer.style.display = "flex";
+    monthContainer.style.gap = "10px";
+    monthContainer.style.marginBottom = "40px";
+    monthContainer.style.alignItems = "flex-start";
+    monthContainer.style.flexWrap = "wrap";
 
-  // If new month and not the first date, insert spacer
-  if (month !== prevMonth && i !== 0) {
-    const spacer = document.createElement("div");
-    spacer.style.width = "6px";
-    spacer.style.gridRow = "span 7";
-    heatmap.appendChild(spacer);
-  }
+    const sampleDate = new Date(monthDates[0]);
+    const monthName = sampleDate.toLocaleString("default", { month: "short" });
 
-  // Month label
-  if (month !== prevMonth) {
-    // const label = document.createElement("div");
-    // label.className = "month-label";
-    // label.style.gridColumnStart = currentWeek + 1;
-    // label.textContent =monthName;
-    // labelRow.appendChild(label);
     const label = document.createElement("div");
     label.className = "month-label";
-    label.style.gridColumn = `${currentWeek + 1}`;
     label.textContent = monthName;
-    labelRow.appendChild(label);
-  
+    label.style.width = "100%";
+    monthContainer.appendChild(label);
+
+    // Split dates into chunks of 7
+    for (let i = 0; i < monthDates.length; i += 7) {
+      const weekDates = monthDates.slice(i, i + 7);
+      const column = document.createElement("div");
+      column.className = "heatmap-column";
+
+      weekDates.forEach((date) => {
+        const box = document.createElement("div");
+        box.className = "day-box";
+        box.style.backgroundColor = getColor(dataMap[date] || 0);
+
+        box.addEventListener("mouseenter", (e) => {
+          tooltip.textContent = `${date} - ${dataMap[date] || 0}% complete`;
+          tooltip.style.left = e.pageX + 10 + "px";
+          tooltip.style.top = e.pageY + "px";
+          tooltip.style.display = "block";
+        });
+
+        box.addEventListener("mousemove", (e) => {
+          tooltip.style.left = e.pageX + 10 + "px";
+          tooltip.style.top = e.pageY + "px";
+        });
+
+        box.addEventListener("mouseleave", () => {
+          tooltip.style.display = "none";
+        });
+
+        column.appendChild(box);
+      });
+
+      monthContainer.appendChild(column);
+    }
+
+    heatmap.appendChild(monthContainer);
   }
 
-  // Day box
-  const box = document.createElement("div");
-  box.className = "day-box";
-  box.style.backgroundColor = getColor(dataMap[date] || 0);
 
-  // Tooltip
-  box.addEventListener("mouseenter", (e) => {
-    tooltip.textContent = `${date} - ${dataMap[date] || 0}% complete`;
-    tooltip.style.left = e.pageX + 10 + "px";
-    tooltip.style.top = e.pageY + "px";
-    tooltip.style.display = "block";
-  });
-
-  box.addEventListener("mousemove", (e) => {
-    tooltip.style.left = e.pageX + 10 + "px";
-    tooltip.style.top = e.pageY + "px";
-  });
-
-  box.addEventListener("mouseleave", () => {
-    tooltip.style.display = "none";
-  });
-
-  heatmap.appendChild(box);
-
-  // Now update prevMonth
-  prevMonth = month;
-});
 </script>
 
 </body>
