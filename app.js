@@ -161,11 +161,19 @@ app.get("/logout", (req,res) => {
 })
 
 app.get("/aboutus", (req, res) => {
-  res.render("aboutus.ejs");
+  if(req.isAuthenticated()) {
+    res.render("aboutus.ejs");
+  } else {
+    res.redirect("/login?error=Kindly login.");
+  }
 });
 
 app.get("/contact", (req, res) => {
-  res.render("contact.ejs");
+  if(req.isAuthenticated()) {
+    res.render("contact.ejs");
+  } else {
+    res.redirect("/login?error=Kindly login.");
+  }
 });
 
 app.post("/register", async (req,res) => {
