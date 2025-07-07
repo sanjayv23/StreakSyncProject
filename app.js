@@ -4,7 +4,7 @@ import express from "express";
 import bodyParser from "body-parser"
 import dotenv from "dotenv";
 import pg from "pg";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import session from "express-session";
 import passport from "passport";
 import { Strategy } from "passport-local";
