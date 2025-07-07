@@ -16,7 +16,7 @@ import { v4 as uuidv4 } from "uuid";
 dotenv.config();
 const app = express();
 const saltRounds = 3;
-const port = process.env.PORT;
+const port = process.env.PORT||3000;
 
 
 const db = new pg.Client({
