@@ -70,8 +70,8 @@ app.get("/login", (req,res) => {
 
 app.get("/app", async (req,res) => {
   const d = new Date();
-  console.log(" data: "+ new Date().toISOString().split('T')[0]);
-  console.log("old date: "+d.getDate());
+  //console.log(" data: "+ new Date().toISOString().split('T')[0]);
+  //console.log("old date: "+d.getDate());
   if(req.isAuthenticated()) {
     let a,b;
     try {
@@ -106,7 +106,7 @@ app.get("/app", async (req,res) => {
 `,[req.user.id]
     );
 
-    console.log("-------"+JSON.stringify(result.rows)); // Log rows for debugging
+    //console.log("-------"+JSON.stringify(result.rows)); // Log rows for debugging
 
 
     //res.render("app.ejs", { streak: result.rows }); // send data to EJS
@@ -203,7 +203,7 @@ app.post("/login", passport.authenticate("local", {
 // add task on task list
 app.post("/task", async (req, res) => {
   const d = new Date();
-  console.log("tkas:", req.body.t_name);
+  //console.log("tkas:", req.body.t_name);
   const task_id = uuidv4();
   try {
     await db.query(
@@ -220,7 +220,7 @@ app.post("/task", async (req, res) => {
 // delete task on task list
 app.post("/delete-task",async (req,res)=>{
   const d = new Date();
-  console.log("del id: "+req.body.task_id);
+  //console.log("del id: "+req.body.task_id);
   try {    
       const data=await db.query("delete from task where task_id=($1)",[req.body.task_id]);
   }
