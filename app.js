@@ -344,13 +344,14 @@ passport.use("local",
     return cb(err);
   }
 }));
-
+console.log("Using Google Strategy"+ process.env.GOOGLE_CALLBACK_URL)
 passport.use(
   "google", 
   new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "https://streaksyncproject.onrender.com/auth/google/streaksync",
+    
+    callbackURL: process.env.GOOGLE_CALLBACK_URL,
     userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
   }, async (accessToken, refreshToken, profile, cb) => {
     try {
