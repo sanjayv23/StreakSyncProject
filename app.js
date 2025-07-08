@@ -122,7 +122,7 @@ app.get("/app", async (req,res) => {
 
 app.get("/auth/google", passport.authenticate("google", {
   scope: ["profile", "email"],
-  callbackURL: process.env.GOOGLE_CALLBACK_URL,
+  //callbackURL: process.env.GOOGLE_CALLBACK_URL,
 }));
 
 app.get("/auth/google/streaksync", passport.authenticate("google", {
