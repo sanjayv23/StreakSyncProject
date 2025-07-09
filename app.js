@@ -88,10 +88,24 @@ app.get("/app", async (req,res) => {
       console.error("error is executing"+err.stack);
     }
     percent = (a + b) === 0 ? 0 : Math.floor((b / (a + b)) * 100);
+    if (isNaN(percent)) {
+      console.error("Percent is NaN — skipping DB insert.");
+      percent = 0;
+    }
 
-    await db.query(
-      "INSERT INTO complete_percentage (user_id, date, percentage) VALUES ($1, $2, $3) ON CONFLICT (user_id, date) DO UPDATE SET percentage = $3;",[req.user.id,new Date().toISOString().split('T')[0],parseInt(percent)]
-    );
+    // await db.query(  
+    //   "INSERT INTO complete_percentage (user_id, date, percentage) VALUES ($1, $2, $3) ON CONFLICT (user_id, date) DO UPDATE SET percentage = $3;",[req.user.id,new Date().toISOString().split('T')[0],parseInt(percent)]
+    // );
+    try {
+  await db.query(
+    "INSERT INTO complete_percentage (user_id, date, percentage) VALUES ($1, $2, $3) ON CONFLICT (user_id, date) DO UPDATE SET percentage = $3;",
+    [req.user.id, new Date().toISOString().split('T')[0], parseInt(percent)]
+  );
+} catch (err) {
+  console.error("Error inserting/updating complete_percentage:", err.message);
+  return res.status(500).send("Something went wrong updating progress.");
+}
+
     // for(let i=0;i<task.length;i++){
     //   console.log("task: "+JSON.stringify(task[i]));
     // }
@@ -120,6 +134,10 @@ app.get("/app", async (req,res) => {
     res.redirect("/login?error=Kindly login.");
 });
 
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
+});
+ 
 app.get("/auth/google", passport.authenticate("google", {
   scope: ["profile", "email"],
   //callbackURL: process.env.GOOGLE_CALLBACK_URL,
