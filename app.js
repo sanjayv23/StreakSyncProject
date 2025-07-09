@@ -53,8 +53,12 @@ let date = d.getDate() +" "+ (d.getMonth()+1) +" " + d.getFullYear();
 // get routes
 
 app.get("/", (req,res) => {
+  if(req.isAuthenticated()) {
+    return res.redirect("/app");
+  }
   res.redirect("/login");
 });
+
 
 app.get("/register", (req,res) => { 
   res.render("signup.ejs", { error: req.query.error || "" });
