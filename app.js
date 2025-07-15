@@ -73,8 +73,8 @@ app.get("/login", (req,res) => {
 });
 
 app.get("/app", async (req,res) => {
-  const d = new Date();
-  //console.log(" data: "+ new Date().toISOString().split('T')[0]);
+  
+  console.log(" data: "+ date);
   //console.log("old date: "+d.getDate());
   if(req.isAuthenticated()) {
     let a,b;
