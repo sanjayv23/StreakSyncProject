@@ -47,8 +47,9 @@ app.use(passport.session());
 let task = [];
 let complete = [];
 let percent;
-//const d = new Date();
-const d = new Date().toLocaleString('en-US',{ timeZone: 'Asia/kolkata' });
+const d = new Date();
+console.log("Current date: " + d.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+//const d = new Date().toLocaleString('en-US',{ timeZone: 'Asia/kolkata' });
 let date = d.getDate() +" "+ (d.getMonth()+1) +" " + d.getFullYear();
 
 // get routes
