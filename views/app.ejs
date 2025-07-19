@@ -631,9 +631,13 @@
     const dates = [];
     const today = new Date();
     const start = new Date(today);
-    start.setDate(1);
+    
     start.setMonth(today.getMonth() - monthsBack);
-
+    start.setDate(1);
+    while (start.getMonth() < 0) {
+    start.setMonth(start.getMonth() + 12);
+    start.setFullYear(start.getFullYear() - 1);
+  }
     for (let d = new Date(start); d <= today; d.setDate(d.getDate() + 1)) {
       const iso = d.toISOString().split('T')[0];
       dates.push(iso);
