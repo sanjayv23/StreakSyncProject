@@ -49,9 +49,9 @@ let complete = [];
 let percent;
 //const d = new Date();
 
-const d = new Date().toLocaleString('en-US',{ timeZone: 'Asia/kolkata' });
+const d = new Date();
 console.log("Current date: " + d);
-let date = d;
+let date = d.toISOString().split('T')[0]; // Format date as YYYY-MM-DD
 
 // get routes
 
