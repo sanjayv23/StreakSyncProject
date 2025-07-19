@@ -47,9 +47,10 @@ app.use(passport.session());
 let task = [];
 let complete = [];
 let percent;
-const d = new Date();
-console.log("Current date: " + d.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
-//const d = new Date().toLocaleString('en-US',{ timeZone: 'Asia/kolkata' });
+//const d = new Date();
+
+const d = new Date().toLocaleString('en-US',{ timeZone: 'Asia/kolkata' });
+console.log("Current date: " + d);
 let date = d.getDate() +" "+ (d.getMonth()+1) +" " + d.getFullYear();
 
 // get routes
@@ -81,10 +82,10 @@ app.get("/app", async (req,res) => {
   if(req.isAuthenticated()) {
     let a,b;
     try {
-        const data = await db.query("select * from task where date=($1) and month=($2) and year=($3) and user_id=($4);",
-          [d.getDate(),d.getMonth()+1,d.getFullYear(),req.user.id]);
-        const data2 = await db.query("select * from complete_task where date=($1) and month=($2) and year=($3) and user_id=($4);",
-          [d.getDate(),d.getMonth()+1,d.getFullYear(),req.user.id]);
+        const data = await db.query("select * from task where date=($1) and user_id=($2);",
+          [d.toISOString().split('T')[0],req.user.id]);
+        const data2 = await db.query("select * from complete_task where date=($1) and user_id=($2);",
+          [d.toISOString().split('T')[0],req.user.id]);
         a=data.rowCount;
         b=data2.rowCount;
         complete=data2.rows;
@@ -240,8 +241,8 @@ app.post("/task", async (req, res) => {
   const task_id = uuidv4();
   try {
     await db.query(
-      'INSERT INTO task (user_id, task, task_id, date, month, year) VALUES ($1, $2, $3, $4, $5, $6)',
-      [req.user.id, req.body.t_name, task_id, d.getDate(), d.getMonth() + 1, d.getFullYear()]
+      'INSERT INTO task (user_id, task, task_id, date) VALUES ($1, $2, $3, $4)',
+      [req.user.id, req.body.t_name, task_id, d.toISOString().split('T')[0]]
     );
     res.redirect("/app");
   } catch (err) {
@@ -278,8 +279,8 @@ app.post("/complete-task", async (req, res) => {
 
     // Insert into `complete_task`
     await db.query(
-      "INSERT INTO complete_task (user_id, task, task_id, date, month, year) VALUES ($1, $2, $3, $4, $5, $6)",
-      [req.user.id, req.body.task, req.body.task_id, d.getDate(), d.getMonth() + 1, d.getFullYear()]
+      "INSERT INTO complete_task (user_id, task, task_id, date) VALUES ($1, $2, $3, $4)",
+      [req.user.id, req.body.task, req.body.task_id, d.toISOString().split('T')[0]]
     );
     // let a,b;
     // try {
@@ -318,8 +319,8 @@ app.post("/complete-task", async (req, res) => {
 app.post("/delete-complete",async  (req,res)=>{
   const d = new Date();
   try{
-      await db.query("delete from complete_task where date=($1) and month=($2) and year=($3)",
-        [d.getDate(), d.getMonth()+1, d.getFullYear()]);
+      await db.query("delete from complete_task where date=($1) and user_id=($2)",
+        [d.toISOString().split('T')[0], req.user.id]);
   }
   catch(err) {
       console.error(err);
@@ -332,8 +333,8 @@ app.post("/delete-complete",async  (req,res)=>{
 app.post("/delete-today", async (req,res)=>{
   const d = new Date();
   try {
-      await db.query("delete from task where date=($1) and month=($2) and year=($3)",
-        [d.getDate(), d.getMonth()+1, d.getFullYear()]
+      await db.query("delete from task where date=($1) and user_id=($2)",
+        [d.toISOString().split('T')[0], req.user.id]
       );
   }
   catch(err) {
@@ -369,7 +370,7 @@ passport.use("local",
     return cb(err);
   }
 }));
-console.log("Using Google Strategy"+ process.env.GOOGLE_CALLBACK_URL)
+//console.log("Using Google Strategy"+ process.env.GOOGLE_CALLBACK_URL)
 passport.use(
   "google", 
   new GoogleStrategy({
