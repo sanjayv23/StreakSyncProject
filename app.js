@@ -51,7 +51,7 @@ let percent;
 
 const d = new Date().toLocaleString('en-US',{ timeZone: 'Asia/kolkata' });
 console.log("Current date: " + d);
-let date = d.getDate() +" "+ (d.getMonth()+1) +" " + d.getFullYear();
+let date = d;
 
 // get routes
 
