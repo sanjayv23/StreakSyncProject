@@ -397,7 +397,7 @@
     </div>
 
     <div class="ldiv2">
-      <%= console.log("Rendering tasks for date:", date) %>
+      
       <h3>TODAY - <%= date %></h3>
       <ul id="task-list">
         <% for (let i = 0; i < task.length; i++) { %>
@@ -619,7 +619,7 @@
   streakData.forEach(entry => {
     dataMap[entry.date] = entry.percentage;
   });
-
+  console.log("Rendering tasks for date:", date) ;
   function getColor(percentage) {
     if (percentage >= 90) return "#216e39";
     if (percentage >= 60) return "#30a14e";
