@@ -49,7 +49,20 @@ let complete = [];
 let percent;
 //const d = new Date();
 
+function dateformat(date){
+    let year=date.split('/')[2];
+    let month=date.split('/')[0];
+    let day=date.split('/')[1];
+    if(month<=9) month="0"+month;
+    if(day<=9) day="0"+day;
+    return year+"-"+month+"-"+day
+}
+
 const d = new Date();
+const datefinal = new Date().toLocaleString('en-US', { timeZone: 'Asia/kolkata' });
+const datestr=datefinal.split(',')[0];
+const dateformatted = dateformat(datestr);
+console.log("Formatted date: " + dateformatted);
 console.log("Current date: " + d);
 let date = d.toISOString().split('T')[0]; // Format date as YYYY-MM-DD
 
@@ -83,9 +96,9 @@ app.get("/app", async (req,res) => {
     let a,b;
     try {
         const data = await db.query("select * from task where date=($1) and user_id=($2);",
-          [d.toISOString().split('T')[0],req.user.id]);
+          [dateformatted,req.user.id]);
         const data2 = await db.query("select * from complete_task where date=($1) and user_id=($2);",
-          [d.toISOString().split('T')[0],req.user.id]);
+          [dateformatted,req.user.id]);
         a=data.rowCount;
         b=data2.rowCount;
         complete=data2.rows;
@@ -106,7 +119,7 @@ app.get("/app", async (req,res) => {
     try {
   await db.query(
     "INSERT INTO complete_percentage (user_id, date, percentage) VALUES ($1, $2, $3) ON CONFLICT (user_id, date) DO UPDATE SET percentage = $3;",
-    [req.user.id, new Date().toISOString().split('T')[0], parseInt(percent)]
+    [req.user.id, dateformatted, parseInt(percent)]
   );
 } catch (err) {
   console.error("Error inserting/updating complete_percentage:", err.message);
@@ -242,7 +255,7 @@ app.post("/task", async (req, res) => {
   try {
     await db.query(
       'INSERT INTO task (user_id, task, task_id, date) VALUES ($1, $2, $3, $4)',
-      [req.user.id, req.body.t_name, task_id, d.toISOString().split('T')[0]]
+      [req.user.id, req.body.t_name, task_id, dateformatted]
     );
     res.redirect("/app");
   } catch (err) {
@@ -280,7 +293,7 @@ app.post("/complete-task", async (req, res) => {
     // Insert into `complete_task`
     await db.query(
       "INSERT INTO complete_task (user_id, task, task_id, date) VALUES ($1, $2, $3, $4)",
-      [req.user.id, req.body.task, req.body.task_id, d.toISOString().split('T')[0]]
+      [req.user.id, req.body.task, req.body.task_id, dateformatted]
     );
     // let a,b;
     // try {
@@ -320,7 +333,7 @@ app.post("/delete-complete",async  (req,res)=>{
   const d = new Date();
   try{
       await db.query("delete from complete_task where date=($1) and user_id=($2)",
-        [d.toISOString().split('T')[0], req.user.id]);
+        [dateformatted, req.user.id]);
   }
   catch(err) {
       console.error(err);
@@ -334,7 +347,7 @@ app.post("/delete-today", async (req,res)=>{
   const d = new Date();
   try {
       await db.query("delete from task where date=($1) and user_id=($2)",
-        [d.toISOString().split('T')[0], req.user.id]
+        [dateformatted, req.user.id]
       );
   }
   catch(err) {
