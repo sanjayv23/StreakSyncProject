@@ -59,12 +59,12 @@ function dateformat(date){
 }
 
 const d = new Date();
-const datefinal = new Date().toLocaleString('en-US', { timeZone: 'Asia/kolkata' });
-const datestr=datefinal.split(',')[0];
-const dateformatted = dateformat(datestr);
+const datefinal = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/kolkata' }); // Format date as YYYY-MM-DD
+//const datestr=datefinal.split(',')[0];
+const dateformatted = datefinal;
 console.log("Formatted date: " + dateformatted);
-console.log("Current date: " + d);
-let date = d.toISOString().split('T')[0]; // Format date as YYYY-MM-DD
+
+let date = datefinal; // Format date as YYYY-MM-DD
 
 // get routes
 
