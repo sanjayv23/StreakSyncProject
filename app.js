@@ -58,13 +58,13 @@ function dateformat(date){
     return year+"-"+month+"-"+day
 }
 
-const d = new Date();
-const datefinal = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/kolkata' }); // Format date as YYYY-MM-DD
-//const datestr=datefinal.split(',')[0];
-const dateformatted = datefinal;
-console.log("Formatted date: " + dateformatted);
+// const d = new Date();
+// const datefinal = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/kolkata' }); // Format date as YYYY-MM-DD
+// //const datestr=datefinal.split(',')[0];
+// const dateformatted = datefinal;
+// console.log("Formatted date: " + dateformatted);
 
-let date = datefinal; // Format date as YYYY-MM-DD
+// let date = datefinal; // Format date as YYYY-MM-DD
 
 // get routes
 
@@ -89,7 +89,13 @@ app.get("/login", (req,res) => {
 });
 
 app.get("/app", async (req,res) => {
-  
+  const d = new Date();
+const datefinal = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/kolkata' }); // Format date as YYYY-MM-DD
+//const datestr=datefinal.split(',')[0];
+const dateformatted = datefinal;
+console.log("Formatted date: " + dateformatted);
+
+let date = datefinal;
   console.log(" data: "+ date);
   //console.log("old date: "+d.getDate());
   if(req.isAuthenticated()) {
@@ -216,7 +222,7 @@ app.get("/contact", (req, res) => {
 });
 
 app.post("/register", async (req,res) => {
-  const d = new Date();
+  
   const {name, mail, password} = req.body;
   //console.log("inside register: "+JSON.stringify(req.body));
   const result = await db.query(
@@ -249,7 +255,13 @@ app.post("/login", passport.authenticate("local", {
 
 // add task on task list
 app.post("/task", async (req, res) => {
-  const d = new Date();
+  
+const datefinal = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/kolkata' }); // Format date as YYYY-MM-DD
+//const datestr=datefinal.split(',')[0];
+const dateformatted = datefinal;
+console.log("Formatted date: " + dateformatted);
+
+let date = datefinal;
   //console.log("tkas:", req.body.t_name);
   const task_id = uuidv4();
   try {
@@ -266,7 +278,7 @@ app.post("/task", async (req, res) => {
 
 // delete task on task list
 app.post("/delete-task",async (req,res)=>{
-  const d = new Date();
+  
   //console.log("del id: "+req.body.task_id);
   try {    
       const data=await db.query("delete from task where task_id=($1)",[req.body.task_id]);
@@ -280,9 +292,15 @@ app.post("/delete-task",async (req,res)=>{
 // to mark complete on task
 app.post("/complete-task", async (req, res) => {
   
+const datefinal = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/kolkata' }); // Format date as YYYY-MM-DD
+//const datestr=datefinal.split(',')[0];
+const dateformatted = datefinal;
+console.log("Formatted date: " + dateformatted);
+
+let date = datefinal;
   if (!req.isAuthenticated()) return res.redirect("/login");
 
-  const d = new Date(); // fresh date
+  
   try {
     // Delete task from `task` table
     await db.query(
@@ -330,7 +348,13 @@ app.post("/complete-task", async (req, res) => {
 
 // delete all completed task
 app.post("/delete-complete",async  (req,res)=>{
-  const d = new Date();
+ 
+const datefinal = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/kolkata' }); // Format date as YYYY-MM-DD
+//const datestr=datefinal.split(',')[0];
+const dateformatted = datefinal;
+console.log("Formatted date: " + dateformatted);
+
+let date = datefinal;
   try{
       await db.query("delete from complete_task where date=($1) and user_id=($2)",
         [dateformatted, req.user.id]);
@@ -344,7 +368,13 @@ app.post("/delete-complete",async  (req,res)=>{
 
 // delete all task on task list
 app.post("/delete-today", async (req,res)=>{
-  const d = new Date();
+  
+const datefinal = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/kolkata' }); // Format date as YYYY-MM-DD
+//const datestr=datefinal.split(',')[0];
+const dateformatted = datefinal;
+console.log("Formatted date: " + dateformatted);
+
+let date = datefinal;
   try {
       await db.query("delete from task where date=($1) and user_id=($2)",
         [dateformatted, req.user.id]
