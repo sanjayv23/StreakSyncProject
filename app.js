@@ -90,7 +90,8 @@ app.get("/login", (req,res) => {
 
 app.get("/app", async (req,res) => {
   const d = new Date();
-const datefinal = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/kolkata' }); // Format date as YYYY-MM-DD
+//const datefinal = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/kolkata' }); // Format date as YYYY-MM-DD
+const datefinal = new Date().toISOString().split('T')[0];
 //const datestr=datefinal.split(',')[0];
 const dateformatted = datefinal;
 console.log("Formatted date: " + dateformatted);
