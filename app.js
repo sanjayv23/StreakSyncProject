@@ -257,7 +257,8 @@ app.post("/login", passport.authenticate("local", {
 // add task on task list
 app.post("/task", async (req, res) => {
   
-const datefinal = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/kolkata' }); // Format date as YYYY-MM-DD
+//const datefinal = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/kolkata' }); // Format date as YYYY-MM-DD
+const datefinal = new Date().toISOString().split('T')[0];
 //const datestr=datefinal.split(',')[0];
 const dateformatted = datefinal;
 console.log("Formatted date: " + dateformatted);
@@ -293,7 +294,8 @@ app.post("/delete-task",async (req,res)=>{
 // to mark complete on task
 app.post("/complete-task", async (req, res) => {
   
-const datefinal = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/kolkata' }); // Format date as YYYY-MM-DD
+//onst datefinal = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/kolkata' }); // Format date as YYYY-MM-DD
+const datefinal = new Date().toISOString().split('T')[0];
 //const datestr=datefinal.split(',')[0];
 const dateformatted = datefinal;
 console.log("Formatted date: " + dateformatted);
@@ -350,7 +352,8 @@ let date = datefinal;
 // delete all completed task
 app.post("/delete-complete",async  (req,res)=>{
  
-const datefinal = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/kolkata' }); // Format date as YYYY-MM-DD
+//const datefinal = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/kolkata' }); // Format date as YYYY-MM-DD
+const datefinal = new Date().toISOString().split('T')[0];
 //const datestr=datefinal.split(',')[0];
 const dateformatted = datefinal;
 console.log("Formatted date: " + dateformatted);
@@ -370,7 +373,8 @@ let date = datefinal;
 // delete all task on task list
 app.post("/delete-today", async (req,res)=>{
   
-const datefinal = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/kolkata' }); // Format date as YYYY-MM-DD
+//const datefinal = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/kolkata' }); // Format date as YYYY-MM-DD
+const datefinal = new Date().toISOString().split('T')[0];
 //const datestr=datefinal.split(',')[0];
 const dateformatted = datefinal;
 console.log("Formatted date: " + dateformatted);
