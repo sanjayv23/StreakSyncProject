@@ -38,12 +38,12 @@ CREATE TABLE users (
 );
 
 
-INSERT INTO complete_percentage (id, user_id, date, percentage)
+INSERT INTO complete_percentage (user_id, date, percentage)
 SELECT 
-    row_number() OVER () + COALESCE((SELECT MAX(id) FROM complete_percentage), 0) AS id,
     'c6c6023b-4163-4603-81af-cd48149dda76' AS user_id,
     gs::date AS date,
     FLOOR(random() * 101)::int AS percentage
 FROM generate_series('2025-03-01'::date, '2025-12-31'::date, '1 day') AS gs
 ON CONFLICT (user_id, date) 
 DO UPDATE SET percentage = EXCLUDED.percentage;
+
